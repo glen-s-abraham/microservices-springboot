@@ -28,6 +28,10 @@ public class AccountServiceImpl implements IAccountsService {
     @Override
     public void createAccount(CustomerDto customerDto) {
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
+        customerRepository.findByMobileNumber(customer.getMobileNumber())
+                .ifPresent(existingCustomer -> {
+                    throw new CustomerAlreadyExistsException("Customer already exists");
+                });
         Customer savedCustomer = customerRepository.save(customer);
         accountRepository.save(createNewAccount(savedCustomer));
     }
@@ -36,11 +40,6 @@ public class AccountServiceImpl implements IAccountsService {
         Account newAccount = new Account();
         newAccount.setCustomerId(customer.getCustomerId());
         long randomAccNumber = 1000000000L + new Random().nextInt(900000000);
-
-        customerRepository.findByMobileNumber(customer.getMobileNumber())
-                .ifPresent(existingCustomer -> {
-                    throw new CustomerAlreadyExistsException("Customer already exists");
-                });
 
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(AccountsConstants.SAVINGS);

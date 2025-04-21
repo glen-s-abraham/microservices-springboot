@@ -27,7 +27,7 @@ public class AccountsController {
         this.accountsService = accountsService;
     }
 
-    @PostMapping("/account")
+    @PostMapping("/create")
     public ResponseEntity<ResponseDto> createAccount(@RequestBody CustomerDto customerDto) {
         accountsService.createAccount(customerDto);
         return ResponseEntity.status(HttpStatus.CREATED)
