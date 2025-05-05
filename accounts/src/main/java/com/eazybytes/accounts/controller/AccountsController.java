@@ -3,6 +3,7 @@ package com.eazybytes.accounts.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eazybytes.accounts.constants.AccountsConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -17,7 +18,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 
+import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +43,18 @@ public class AccountsController {
 
     private final IAccountsService accountsService;
 
-    public AccountsController(IAccountsService accountsService) {
+    private final Environment environment;
+
+    private final AccountsContactInfoDto accountsContactInfoDto;
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    public AccountsController(IAccountsService accountsService, Environment environment,
+            AccountsContactInfoDto accountsContactInfoDto) {
         this.accountsService = accountsService;
+        this.environment = environment;
+        this.accountsContactInfoDto = accountsContactInfoDto;
     }
 
     @Operation(summary = "Create an account in EazyBank", description = "Create an account in EazyBank with the given customer details")
@@ -84,7 +98,7 @@ public class AccountsController {
     @Operation(summary = "Delete an account in EazyBank", description = "Delete an account in EazyBank with the given mobile number")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
-            @ApiResponse(responseCode = "417", description = "HTTP Status EXPECTATION_FAILED",content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
+            @ApiResponse(responseCode = "417", description = "HTTP Status EXPECTATION_FAILED", content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @DeleteMapping("/delete")
     public ResponseEntity<ResponseDto> deleteAccountDetails(
@@ -99,5 +113,29 @@ public class AccountsController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(AccountsConstants.STATUS_417, AccountsConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @Operation(summary = "get Build information", description = "Get Build information that is deployed into accounts microservice")
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error") })
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+        return ResponseEntity.ok().body(buildVersion);
+    }
+
+    @Operation(summary = "get java version", description = "Get java version that is deployed into accounts microservice")
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error") })
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getjavaVersion() {
+        return ResponseEntity.ok().body(environment.getProperty("JAVA_HOME"));
+    }
+
+    @Operation(summary = "get contact info", description = "Get contact info that is deployed into accounts microservice")
+    @ApiResponses({ @ApiResponse(responseCode = "200", description = "HTTP Status OK"),
+            @ApiResponse(responseCode = "500", description = "HTTP Status Internal Server Error") })
+    @GetMapping("/contact-info")
+    public ResponseEntity<AccountsContactInfoDto> getContactInfo() {
+        return ResponseEntity.ok().body(accountsContactInfoDto);
     }
 }

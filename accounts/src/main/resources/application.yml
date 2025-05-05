@@ -19,3 +19,15 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to Eazybank accounts related local API's"
+  contactDetails:
+    name: "John Doe - developer"
+    email: "john@eazybank.com"
+  onCallSupport:
+    - (555)555-1234
+    - (555)555-1235
