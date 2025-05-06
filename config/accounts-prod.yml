@@ -1,0 +1,12 @@
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to Eazybank accounts related production API's"
+  contactDetails:
+    name: "Jane Doe - Product owner"
+    #encrypted using config server /encrypt endpoint
+    email: "{cipher}619f16a4590121f788d6eebd9d77990646ba1cc7c9e882a16a1670f64644ae3960cefcd9d4a9bea8478a8ee0cf580a60"
+  onCallSupport:
+    - (555)392-1234
+    - (555)329-1235
