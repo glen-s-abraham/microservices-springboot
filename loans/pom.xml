@@ -52,6 +52,10 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-config</artifactId>
     </dependency>
+	 <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+    </dependency>
 
 
 		<!-- pom.xml -->
@@ -131,7 +135,7 @@
 				<version>3.4.5</version>
 				<configuration>
 					<to>
-						<image>glen546/${project.artifactId}:s7</image>
+						<image>glen546/${project.artifactId}:s8</image>
 					</to>
 					<allowInsecureRegistries>true</allowInsecureRegistries>
 				</configuration>
