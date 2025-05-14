@@ -39,6 +39,20 @@ management:
   endpoint:
     shutdown:
       access: unrestricted
+    health:
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
   info:
     env:
       enabled: true
+
+logging:
+  level:
+    com:
+      eazybytes:
+        loans: DEBUG

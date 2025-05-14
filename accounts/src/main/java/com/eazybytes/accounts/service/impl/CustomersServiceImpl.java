@@ -22,33 +22,34 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CustomersServiceImpl implements ICustomerService {
 
-    private AccountRepository accountsRepository;
-    private CustomerRepository customerRepository;
-    private CardsFeignclient cardsFeignClient;
-    private LoansFeignClient loansFeignClient;
+        private AccountRepository accountsRepository;
+        private CustomerRepository customerRepository;
+        private CardsFeignclient cardsFeignClient;
+        private LoansFeignClient loansFeignClient;
 
-    /**
-     * @param mobileNumber - Input Mobile Number
-     * @return Customer Details based on a given mobileNumber
-     */
-    @Override
-    public CustomerDetailsDto fetchCustomerDetails(String mobileNumber) {
-        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
-        Account accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
-                () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString()));
+        /**
+         * @param mobileNumber - Input Mobile Number
+         * @return Customer Details based on a given mobileNumber
+         */
+        @Override
+        public CustomerDetailsDto fetchCustomerDetails(String mobileNumber, String correlationId) {
+                Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
+                Account accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                                () -> new ResourceNotFoundException("Account", "customerId",
+                                                customer.getCustomerId().toString()));
 
-        CustomerDetailsDto customerDetailsDto = CustomerMapper.mapToCustomerDetailsDto(customer,
-                new CustomerDetailsDto());
-        customerDetailsDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountDto()));
+                CustomerDetailsDto customerDetailsDto = CustomerMapper.mapToCustomerDetailsDto(customer,
+                                new CustomerDetailsDto());
+                customerDetailsDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountDto()));
 
-        ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoanDetails(mobileNumber);
-        customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
+                ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoanDetails(correlationId,mobileNumber);
+                customerDetailsDto.setLoansDto(loansDtoResponseEntity.getBody());
 
-        ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(mobileNumber);
-        customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
+                ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(correlationId,mobileNumber);
+                customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
 
-        return customerDetailsDto;
+                return customerDetailsDto;
 
-    }
+        }
 }

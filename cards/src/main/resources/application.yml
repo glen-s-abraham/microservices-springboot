@@ -35,6 +35,15 @@ management:
   endpoint:
     shutdown:
       access: unrestricted
+    health:
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+
   info:
     env:
       enabled: true
@@ -44,3 +53,9 @@ info:
     name: cards
     description: "Eazybank Cards App"
     version: 1.0
+
+logging:
+  level:
+    com:
+      eazybytes:
+        cards: DEBUG
